@@ -12,18 +12,32 @@ import {
   type SlideFadeRef,
 } from '../components/blocks/SlideFade/SlideFade';
 import { useRef, useState } from 'react';
+import { useGemini } from '../utilities/useGemini';
 
 export const Home = () => {
+  const [response, setResponse] = useState<string>('');
   const [search, setSearch] = useState<string>('');
   const slideFadeRef = useRef<SlideFadeRef>(null);
+
+  const { callGemini, loading, error } = useGemini();
 
   const fadeOut = () => {
     slideFadeRef.current?.hide();
   };
 
+  const handleSubmit = async () => {
+    const result = await callGemini(search);
+    if (result) {
+      setResponse(result);
+    }
+    console.log(response);
+  };
+
   const onSearch = () => {
+    console.log('Fadding out');
     fadeOut();
-    console.log(search);
+    console.log('Submitting data to AI');
+    handleSubmit();
   };
 
   return (
