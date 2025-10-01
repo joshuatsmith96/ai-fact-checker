@@ -23,6 +23,7 @@ export const Home = () => {
 
   const onSearch = () => {
     fadeOut();
+    console.log(search);
   };
 
   return (
@@ -73,7 +74,7 @@ export const Home = () => {
           <Button
             variant="contained"
             sx={{ width: '200px', py: 1.5 }}
-            onClick={fadeOut}
+            onClick={onSearch}
           >
             Search
           </Button>
@@ -82,7 +83,7 @@ export const Home = () => {
             sx={{ width: '200px', py: 1.5 }}
             onClick={onSearch}
           >
-            Trending
+            Random
           </Button>
         </Stack>
       </SlideFade>
