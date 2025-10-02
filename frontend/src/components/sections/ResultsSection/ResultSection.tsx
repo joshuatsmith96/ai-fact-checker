@@ -54,14 +54,16 @@ export const ResultSection = ({ data }: { data: any }) => {
             <Accordion key={index}>
               <AccordionSummary
                 expandIcon={<ArrowDropDownIcon />}
-                sx={{ fontSize: '16px' }}
+                sx={{ fontSize: '16px', fontWeight: 'bold' }}
               >
                 {fact.category}
               </AccordionSummary>
               <AccordionDetails sx={{ padding: '5px 40px 5px 40px' }}>
                 <List sx={{ listStyleType: 'disc' }}>
                   {fact.facts.map((f: string) => (
-                    <ListItem sx={{ display: 'list-item' }}>{f}</ListItem>
+                    <ListItem sx={{ display: 'list-item' }}>
+                      <Typography>{f}</Typography>
+                    </ListItem>
                   ))}
                 </List>
               </AccordionDetails>

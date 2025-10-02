@@ -4,14 +4,20 @@ import cors from "cors";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import exampleData from '../data/exampleData.json' with { type: "json" };
 
+
 dotenv.config();
+
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: ["http://localhost:5173", "192.168.0.21:5173"] }));
+
+const FRONTEND_ORIGINS = ["http://localhost:5173", "http://192.168.0.21:5173"];
+
+app.use(cors({ origin: FRONTEND_ORIGINS }));
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.post("/api/gemini", async (req, res) => {
+  console.log('API has been called')
   try {
     const { prompt } = req.body;
     if (!prompt) return res.status(400).json({ error: "Prompt is required" });
@@ -50,4 +56,9 @@ app.post("/api/gemini", async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+const PORT = 5000;
+const HOST = "0.0.0.0";
+
+app.listen(PORT, HOST, () => {
+  console.log(`Server running on http://${HOST}:${PORT}`);
+});
