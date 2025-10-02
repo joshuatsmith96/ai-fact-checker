@@ -1,21 +1,24 @@
 import { useState, useCallback } from 'react';
 
 interface UseGeminiResult {
-  text: string | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any | null;
   loading: boolean;
   error: string | null;
-  generateText: (_prompt: string) => Promise<string | null>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  generateData: (_prompt: string) => Promise<any | null>;
 }
 
 export const useGemini = (): UseGeminiResult => {
-  const [text, setText] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [data, setData] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const generateText = useCallback(async (prompt: string) => {
+  const generateData = useCallback(async (prompt: string) => {
     setLoading(true);
     setError(null);
-    setText(null);
+    setData(null);
 
     try {
       const response = await fetch('http://localhost:5000/api/gemini', {
@@ -29,22 +32,23 @@ export const useGemini = (): UseGeminiResult => {
       if (!response.ok) {
         let message = 'Failed to fetch Gemini response';
         if (contentType?.includes('application/json')) {
-          const data = await response.json().catch(() => null);
-          if (data?.error) {message = data.error;}
+          const json = await response.json().catch(() => null);
+          if (json?.error) {
+            message = json.error;
+          }
         }
         throw new Error(message);
       }
 
       if (contentType?.includes('application/json')) {
-        const data = await response.json();
-        console.log("DATA", data)
-        setText(data.text);
-        return data.text;
+        const json = await response.json();
+        setData(json); // store full JSON
+        return json;
       } else {
         const raw = await response.text();
         throw new Error(`Unexpected response: ${raw}`);
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message || 'An unknown error occurred');
       return null;
@@ -53,5 +57,5 @@ export const useGemini = (): UseGeminiResult => {
     }
   }, []);
 
-  return { text, loading, error, generateText };
+  return { data, loading, error, generateData };
 };

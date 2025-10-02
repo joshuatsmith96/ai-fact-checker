@@ -12,31 +12,49 @@ import {
   SlideFade,
   type SlideFadeRef,
 } from '../components/blocks/SlideFade/SlideFade';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useGemini } from '../utilities/useGemini';
+import { ResultSection } from '../components/sections/ResultsSection/ResultSection';
 
 export const Home = () => {
   const [search, setSearch] = useState<string>('');
   const slideFadeRef = useRef<SlideFadeRef>(null);
+  const searchSectionRef = useRef<HTMLDivElement>(null);
 
-  const { text, loading, error, generateText } = useGemini();
+  const { data, loading, error, generateData } = useGemini();
 
   const fadeOut = () => {
     slideFadeRef.current?.hide();
+    setTimeout(() => {
+      searchSectionRef.current?.setAttribute('display', 'none');
+    }, 200);
   };
 
   const onSearch = async () => {
     fadeOut();
-    await generateText(search);
+    await generateData(search);
   };
+
+  useEffect(() => {
+    console.log('Updated data:', data);
+  }, [data]);
 
   return (
     <Section
       id="home"
-      sx={{ height: '80vh', justifyContent: 'center', alignItems: 'center' }}
+      sx={{
+        height: loading ? '80vh' : '160px',
+        justifyContent: loading ? 'start' : 'center',
+        alignItems: 'center',
+      }}
     >
       <SlideFade ref={slideFadeRef} direction="down">
-        <Stack justifyContent="center" alignItems="center">
+        {/* Header */}
+        <Stack
+          justifyContent="center"
+          alignItems="center"
+          ref={searchSectionRef}
+        >
           <Typography variant="h4" color="#1976d2" fontWeight="bold">
             AI Fact Checker
           </Typography>
@@ -64,15 +82,13 @@ export const Home = () => {
             sx={{
               mt: 6,
               width: '60%',
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '50px',
-              },
+              '& .MuiOutlinedInput-root': { borderRadius: '50px' },
             }}
             fullWidth
           />
         </Stack>
 
-        {/* Buttons */}
+        {/* Search Button */}
         <Stack
           direction="row"
           justifyContent="center"
@@ -94,21 +110,16 @@ export const Home = () => {
           </Button>
         </Stack>
       </SlideFade>
-      {/* Response */}
-      <Stack mt={4} alignItems="center">
-        <Stack sx={{ width: '100%' }} alignItems={'center'}>
-          {loading ? <CircularProgress size={50} color="inherit" /> : ''}
-        </Stack>
+
+      {/* Response Section */}
+      <Stack mt={4} width="100%">
+        {loading && <CircularProgress size={50} color="inherit" />}
         {error && (
-          <Typography color="error" fontSize="16px">
+          <Typography color="error" fontSize="16px" mt={2}>
             {error}
           </Typography>
         )}
-        {text && !loading && (
-          <Typography fontSize="16px" color="#333" textAlign="center">
-            {text.toString()}
-          </Typography>
-        )}
+        {data && <ResultSection data={data} />}
       </Stack>
     </Section>
   );
