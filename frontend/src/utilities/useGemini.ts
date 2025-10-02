@@ -7,6 +7,7 @@ interface UseGeminiResult {
   error: string | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   generateData: (_prompt: string) => Promise<any | null>;
+  resetData: () => void;
 }
 
 export const useGemini = (): UseGeminiResult => {
@@ -57,5 +58,12 @@ export const useGemini = (): UseGeminiResult => {
     }
   }, []);
 
-  return { data, loading, error, generateData };
+  // New resetData function
+  const resetData = useCallback(() => {
+    setData(null);
+    setError(null);
+    setLoading(false);
+  }, []);
+
+  return { data, loading, error, generateData, resetData };
 };
