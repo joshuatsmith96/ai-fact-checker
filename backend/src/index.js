@@ -56,8 +56,8 @@ app.post("/api/gemini", async (req, res) => {
   }
 });
 
-const PORT = 5000;
-const HOST = "0.0.0.0";
+const PORT = process.env.PORT;
+const HOST = process.env.HOST;
 
 app.listen(PORT, HOST, () => {
   console.log(`Server running on http://${HOST}:${PORT}`);
