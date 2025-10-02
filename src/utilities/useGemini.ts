@@ -1,42 +1,57 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
-interface UseGeminiReturn {
-  callGemini: (_prompt: string) => Promise<string | null>;
+interface UseGeminiResult {
+  text: string | null;
   loading: boolean;
   error: string | null;
+  generateText: (_prompt: string) => Promise<string | null>;
 }
 
-export function useGemini(): UseGeminiReturn {
+export const useGemini = (): UseGeminiResult => {
+  const [text, setText] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const callGemini = async (prompt: string): Promise<string | null> => {
+  const generateText = useCallback(async (prompt: string) => {
     setLoading(true);
     setError(null);
+    setText(null);
 
     try {
-      const res = await fetch('http://localhost:5000/api/gemini', {
+      const response = await fetch('http://localhost:5000/api/gemini', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt }),
       });
 
-      const data: any = await res.json();
+      const contentType = response.headers.get('content-type');
 
-      // Extract text from Gemini response safely
-      const text =
-        data?.candidates?.[0]?.content?.parts?.[0]?.text || JSON.stringify(data);
-      console.log(text);
+      if (!response.ok) {
+        let message = 'Failed to fetch Gemini response';
+        if (contentType?.includes('application/json')) {
+          const data = await response.json().catch(() => null);
+          if (data?.error) {message = data.error;}
+        }
+        throw new Error(message);
+      }
 
-      return text;
-    } catch (err) {
-      console.error('Gemini API Error:', err);
-      setError('Failed to fetch from Gemini');
+      if (contentType?.includes('application/json')) {
+        const data = await response.json();
+        console.log("DATA", data)
+        setText(data.text);
+        return data.text;
+      } else {
+        const raw = await response.text();
+        throw new Error(`Unexpected response: ${raw}`);
+      }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      setError(err.message || 'An unknown error occurred');
       return null;
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  return { callGemini, loading, error };
-}
+  return { text, loading, error, generateText };
+};
