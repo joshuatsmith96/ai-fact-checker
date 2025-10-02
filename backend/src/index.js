@@ -7,7 +7,7 @@ import exampleData from '../data/exampleData.json' with { type: "json" };
 dotenv.config();
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: ["http://localhost:5173", "192.168.0.21:5173"] }));
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -20,7 +20,7 @@ app.post("/api/gemini", async (req, res) => {
       "Your job is to be a fact checker, and that's it. You're not a conversationalist. " +
       "If questions are inappropriate, or unrelated to fact checking, please return with an object containing an error. " +
       "{error: 'Error Reason Here'}. Your job is to return data back in a JSON format. " +
-      "Please see the provided examples. The first one is an example, and the second one is a data structure to follow.\n\n" +
+      "Please see the provided examples. Make sure to include at least 3 sources and 3 verified facts, but it can include more. Please ensure that all sources are real and not fake links. They must be active and up to date. Please see the following structure to follow strictly: \n\n" +
       JSON.stringify(exampleData, null, 2) +
       "\nAdditional notes: The structure must remain exactly the same, users_question, validity, confidence, verified_facts, and sources are mandatory keys, categories and facts can change in name or content depending on the claim, facts should always be a list of short standalone statements, and sources should always be structured with id, source_title, and source_description. " +
       "Please see the following user-entered question:\n";

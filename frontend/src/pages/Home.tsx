@@ -12,104 +12,139 @@ import {
   SlideFade,
   type SlideFadeRef,
 } from '../components/blocks/SlideFade/SlideFade';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useGemini } from '../utilities/useGemini';
+import { ResultSection } from '../components/sections/ResultsSection/ResultSection';
 
 export const Home = () => {
   const [search, setSearch] = useState<string>('');
   const slideFadeRef = useRef<SlideFadeRef>(null);
+  const searchSectionRef = useRef<HTMLDivElement>(null);
 
-  const { text, loading, error, generateText } = useGemini();
+  const { data, loading, error, generateData, resetData } = useGemini();
 
   const fadeOut = () => {
     slideFadeRef.current?.hide();
+    setTimeout(() => {
+      if (searchSectionRef.current) {
+        searchSectionRef.current.style.display = 'none';
+      }
+    }, 200);
   };
 
   const onSearch = async () => {
     fadeOut();
-    await generateText(search);
+    await generateData(search);
   };
+
+  const resetSearch = () => {
+    setSearch('');
+    resetData?.(); // clear previous data
+    if (searchSectionRef.current) {
+      searchSectionRef.current.style.display = 'flex';
+    }
+    slideFadeRef.current?.show();
+  };
+
+  useEffect(() => {
+    console.log('Updated data:', data);
+  }, [data]);
 
   return (
     <Section
       id="home"
-      sx={{ height: '80vh', justifyContent: 'center', alignItems: 'center' }}
+      sx={{
+        flexDirection: 'column',
+        width: '100%',
+      }}
     >
-      <SlideFade ref={slideFadeRef} direction="down">
-        <Stack justifyContent="center" alignItems="center">
-          <Typography variant="h4" color="#1976d2" fontWeight="bold">
-            AI Fact Checker
-          </Typography>
-          <Typography fontSize="18px" color="#767676ff">
-            Retrieve an unbiased breakdown for a specific question
-          </Typography>
-        </Stack>
-
-        {/* Input Field */}
-        <Stack alignItems="center" justifyContent="center">
-          <TextField
-            label="Fact to check"
-            variant="outlined"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              },
-            }}
-            sx={{
-              mt: 6,
-              width: '60%',
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '50px',
-              },
-            }}
-            fullWidth
-          />
-        </Stack>
-
-        {/* Buttons */}
+      {/* Loading indicator */}
+      {loading && (
         <Stack
-          direction="row"
           justifyContent="center"
           alignItems="center"
-          gap={5}
-          mt={3}
+          sx={{ height: '80vh', width: '100%' }}
         >
-          <Button
-            variant="contained"
-            sx={{ width: '200px', py: 1.5 }}
-            onClick={onSearch}
-            disabled={loading || !search}
-          >
-            {loading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              'Search'
-            )}
-          </Button>
+          <CircularProgress size={60} color="primary" />
         </Stack>
-      </SlideFade>
-      {/* Response */}
-      <Stack mt={4} alignItems="center">
-        <Stack sx={{ width: '100%' }} alignItems={'center'}>
-          {loading ? <CircularProgress size={50} color="inherit" /> : ''}
+      )}
+
+      {/* Search area */}
+      {!data && !loading && (
+        <Stack
+          justifyContent="center"
+          alignItems="center"
+          sx={{ height: '80vh' }}
+        >
+          <SlideFade ref={slideFadeRef} direction="down">
+            <Stack
+              justifyContent="center"
+              alignItems="center"
+              ref={searchSectionRef}
+              spacing={2}
+            >
+              <Typography variant="h4" color="#1976d2" fontWeight="bold">
+                AI Fact Checker
+              </Typography>
+              <Typography fontSize="18px" color="#767676ff" textAlign="center">
+                Retrieve an unbiased breakdown for a specific question
+              </Typography>
+
+              <TextField
+                label="Fact to check"
+                variant="outlined"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  mt: 2,
+                  width: { xs: '90%', sm: '100%' },
+                  '& .MuiOutlinedInput-root': { borderRadius: '50px' },
+                }}
+                fullWidth
+              />
+
+              <Button
+                variant="contained"
+                sx={{ width: '200px', py: 1.5, mt: 3 }}
+                onClick={onSearch}
+                disabled={loading || !search}
+              >
+                Search
+              </Button>
+            </Stack>
+          </SlideFade>
         </Stack>
-        {error && (
-          <Typography color="error" fontSize="16px">
-            {error}
-          </Typography>
-        )}
-        {text && !loading && (
-          <Typography fontSize="16px" color="#333" textAlign="center">
-            {text.toString()}
-          </Typography>
-        )}
-      </Stack>
+      )}
+
+      {/* Result Section */}
+      {data && !loading && (
+        <Stack mt={4} px={{ xs: 2, sm: 4, md: 8 }} width="100%" spacing={2}>
+          {error && (
+            <Typography color="error" fontSize="16px" mt={2}>
+              {error}
+            </Typography>
+          )}
+          <ResultSection data={data} />
+
+          <Stack direction="row" width="100%" justifyContent="center">
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ width: '250px', py: 1, mt: 7 }}
+              onClick={resetSearch}
+            >
+              Ask Another Question
+            </Button>
+          </Stack>
+        </Stack>
+      )}
     </Section>
   );
 };

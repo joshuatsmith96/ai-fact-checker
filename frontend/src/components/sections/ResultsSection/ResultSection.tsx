@@ -7,7 +7,10 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import InsertLinkIcon from '@mui/icons-material/InsertLink';
 
-export const ResultSection = () => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const ResultSection = ({ data }: { data: any }) => {
+  const aiData = data[0];
+
   return (
     <Section>
       <Stack gap={3} width={'100%'}>
@@ -15,10 +18,7 @@ export const ResultSection = () => {
           <Typography fontWeight={'bold'} fontSize={'18px'}>
             User's Question
           </Typography>
-          <Typography color="#4c4c4cff">
-            Is it true that eating dark chocolate can significantly improve
-            brain function, including memory and cognitive processing speed?
-          </Typography>
+          <Typography color="#4c4c4cff">{aiData.users_question}</Typography>
         </Stack>
         <Stack
           direction={'row'}
@@ -29,6 +29,7 @@ export const ResultSection = () => {
             width: '100%',
             padding: 2,
             boxSizing: 'border-box',
+            borderRadius: 2,
           }}
         >
           <Stack
@@ -39,54 +40,55 @@ export const ResultSection = () => {
           >
             <ErrorOutlineIcon />
             <Typography fontSize={'20px'} fontWeight={'bold'}>
-              Partially True
+              {aiData.validity}
             </Typography>
           </Stack>
-          <Typography>Confidence: 85%</Typography>
+          <Typography>Confidence: {aiData.confidence}%</Typography>
         </Stack>
         <Stack width={'100%'}>
           <Typography variant="h6" fontWeight={'bold'}>
             Verified Facts
           </Typography>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              sx={{ fontSize: '16px' }}
-            >
-              Fact Category 1
-            </AccordionSummary>
-            <AccordionDetails sx={{ padding: '5px 40px 5px 40px' }}>
-              <List sx={{ listStyleType: 'disc' }}>
-                <ListItem sx={{ display: 'list-item' }}>Item 1</ListItem>
-                <ListItem sx={{ display: 'list-item' }}>Item 2</ListItem>
-                <ListItem sx={{ display: 'list-item' }}>Item 3</ListItem>
-              </List>
-            </AccordionDetails>
-          </Accordion>
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          {aiData.verified_facts.map((fact: any, index: number) => (
+            <Accordion key={index}>
+              <AccordionSummary
+                expandIcon={<ArrowDropDownIcon />}
+                sx={{ fontSize: '16px' }}
+              >
+                {fact.category}
+              </AccordionSummary>
+              <AccordionDetails sx={{ padding: '5px 40px 5px 40px' }}>
+                <List sx={{ listStyleType: 'disc' }}>
+                  {fact.facts.map((f: string) => (
+                    <ListItem sx={{ display: 'list-item' }}>{f}</ListItem>
+                  ))}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          ))}
         </Stack>
         <Stack gap={2}>
           <Typography variant="h6" fontWeight={'bold'}>
             Source References
           </Typography>
-          <Stack
-            direction={'row'}
-            gap={3}
-            justifyContent={'center'}
-            alignItems={'center'}
-          >
-            <InsertLinkIcon />
-            <Stack>
-              <Typography>
-                <Link href="https://www.google.com">
-                  Source Link Title Would Go Here
-                </Link>
-              </Typography>
-              <Typography>
-                A quick little description of the article, what it talks about,
-                and a little bit more than that. Just trying to fill up space
-              </Typography>
-            </Stack>
-          </Stack>
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          {aiData.sources.map((source: any) => (
+            <Link href={source.source_link}>
+              <Stack
+                key={source.id}
+                direction={'row'}
+                gap={3}
+                alignItems={'center'}
+              >
+                <InsertLinkIcon />
+                <Stack>
+                  <Typography>{source.title}</Typography>
+                  <Typography>{source.source_description}</Typography>
+                </Stack>
+              </Stack>
+            </Link>
+          ))}
         </Stack>
       </Stack>
     </Section>
