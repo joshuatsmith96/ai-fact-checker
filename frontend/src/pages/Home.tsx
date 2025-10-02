@@ -92,19 +92,13 @@ export const Home = () => {
               'Search'
             )}
           </Button>
-
-          <Button
-            variant="outlined"
-            sx={{ width: '200px', py: 1.5 }}
-            onClick={onSearch}
-            disabled={loading}
-          >
-            Random
-          </Button>
         </Stack>
       </SlideFade>
       {/* Response */}
-      <Stack mt={4} alignItems="center" maxWidth="60%">
+      <Stack mt={4} alignItems="center">
+        <Stack sx={{ width: '100%' }} alignItems={'center'}>
+          {loading ? <CircularProgress size={50} color="inherit" /> : ''}
+        </Stack>
         {error && (
           <Typography color="error" fontSize="16px">
             {error}
