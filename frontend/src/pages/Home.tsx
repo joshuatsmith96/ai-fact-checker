@@ -76,7 +76,28 @@ export const Home = () => {
           alignItems="center"
           sx={{ height: '80vh' }}
         >
-          <SlideFade ref={slideFadeRef} direction="down">
+          <SlideFade ref={slideFadeRef} direction={'down'}>
+            <Stack
+              width={'100%'}
+              position={'absolute'}
+              top={0}
+              left={'0%'}
+              padding={2}
+              sx={{ backgroundColor: '#fb622aff' }}
+              alignItems={'center'}
+              justifyContent={'center'}
+            >
+              <Typography
+                textAlign={'center'}
+                color={'white'}
+                fontWeight={'bold'}
+                width={'80%'}
+              >
+                Notice: This is a demo. Information may not be valid, and load
+                times may vary since the technology used for this project are
+                using free-tier services.
+              </Typography>
+            </Stack>
             <Stack
               justifyContent="center"
               alignItems="center"
@@ -125,7 +146,7 @@ export const Home = () => {
 
       {/* Result Section */}
       {data && !loading && (
-        <Stack mt={4} px={{ xs: 2, sm: 4, md: 8 }} width="100%" spacing={2}>
+        <Stack px={{ xs: 2, sm: 4, md: 5 }} spacing={2}>
           {error && (
             <Typography color="error" fontSize="16px" mt={2}>
               {error}

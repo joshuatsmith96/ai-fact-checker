@@ -21,8 +21,10 @@ export const useGemini = (): UseGeminiResult => {
     setError(null);
     setData(null);
 
+    const apiURL = import.meta.env.VITE_API_URL;
+
     try {
-      const response = await fetch('http://192.168.0.21:5000/api/gemini', {
+      const response = await fetch(apiURL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt }),
