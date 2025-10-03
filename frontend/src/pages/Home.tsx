@@ -39,7 +39,7 @@ export const Home = () => {
 
   const resetSearch = () => {
     setSearch('');
-    resetData?.(); // clear previous data
+    resetData?.();
     if (searchSectionRef.current) {
       searchSectionRef.current.style.display = 'flex';
     }
@@ -56,9 +56,10 @@ export const Home = () => {
       sx={{
         flexDirection: 'column',
         width: '100%',
+        overflowX: 'hidden',
       }}
     >
-      {/* Loading indicator */}
+      {/* Loading Indicator */}
       {loading && (
         <Stack
           justifyContent="center"
@@ -69,21 +70,27 @@ export const Home = () => {
         </Stack>
       )}
 
-      {/* Search area */}
+      {/* Search Area */}
       {!data && !loading && (
         <Stack
           justifyContent="center"
           alignItems="center"
-          sx={{ height: '80vh' }}
+          sx={{ height: '80vh', width: '100%' }}
         >
-          <SlideFade ref={slideFadeRef} direction={'down'}>
+          <SlideFade ref={slideFadeRef} direction="down">
             <Stack
               justifyContent="center"
               alignItems="center"
               ref={searchSectionRef}
               spacing={2}
+              sx={{ width: '100%', maxWidth: 600, px: 2 }}
             >
-              <Typography variant="h4" color="#1976d2" fontWeight="bold">
+              <Typography
+                variant="h4"
+                color="#1976d2"
+                fontWeight="bold"
+                textAlign="center"
+              >
                 AI Fact Checker
               </Typography>
               <Typography fontSize="18px" color="#767676ff" textAlign="center">
@@ -102,12 +109,11 @@ export const Home = () => {
                     </InputAdornment>
                   ),
                 }}
+                fullWidth
                 sx={{
                   mt: 2,
-                  width: { xs: '90%', sm: '100%' },
                   '& .MuiOutlinedInput-root': { borderRadius: '50px' },
                 }}
-                fullWidth
               />
 
               <Button
@@ -125,7 +131,11 @@ export const Home = () => {
 
       {/* Result Section */}
       {data && !loading && (
-        <Stack px={{ xs: 2, sm: 4, md: 5 }} spacing={2}>
+        <Stack
+          px={{ xs: 2, sm: 4, md: 5 }}
+          spacing={2}
+          sx={{ width: '100%', overflowX: 'hidden' }}
+        >
           {error && (
             <Typography color="error" fontSize="16px" mt={2}>
               {error}
