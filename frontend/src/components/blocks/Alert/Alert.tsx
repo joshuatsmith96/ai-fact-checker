@@ -10,6 +10,7 @@ export const Alert = ({ children }: { children: ReactNode }) => (
     sx={{ backgroundColor: '#fb622aff' }}
     alignItems={'center'}
     justifyContent={'center'}
+    boxSizing={'border-box'}
   >
     <Typography
       textAlign={'center'}

@@ -51,20 +51,13 @@ export const Home = () => {
   }, [data]);
 
   return (
-    <Section
-      id="home"
-      sx={{
-        flexDirection: 'column',
-        width: '100%',
-        overflowX: 'hidden',
-      }}
-    >
+    <Section id="home">
       {/* Loading Indicator */}
       {loading && (
         <Stack
           justifyContent="center"
           alignItems="center"
-          sx={{ height: '80vh', width: '100%' }}
+          sx={{ height: '70vh', width: '100%' }}
         >
           <CircularProgress size={60} color="primary" />
         </Stack>
@@ -75,7 +68,7 @@ export const Home = () => {
         <Stack
           justifyContent="center"
           alignItems="center"
-          sx={{ height: '80vh', width: '100%' }}
+          sx={{ height: '65vh', width: '100%' }}
         >
           <SlideFade ref={slideFadeRef} direction="down">
             <Stack
@@ -83,7 +76,6 @@ export const Home = () => {
               alignItems="center"
               ref={searchSectionRef}
               spacing={2}
-              sx={{ width: '100%', maxWidth: 600, px: 2 }}
             >
               <Typography
                 variant="h4"
@@ -102,6 +94,11 @@ export const Home = () => {
                 variant="outlined"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    onSearch(); // Call your search function
+                  }
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
