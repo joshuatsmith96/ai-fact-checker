@@ -78,27 +78,6 @@ export const Home = () => {
         >
           <SlideFade ref={slideFadeRef} direction={'down'}>
             <Stack
-              width={'100%'}
-              position={'absolute'}
-              top={0}
-              left={'0%'}
-              padding={2}
-              sx={{ backgroundColor: '#fb622aff' }}
-              alignItems={'center'}
-              justifyContent={'center'}
-            >
-              <Typography
-                textAlign={'center'}
-                color={'white'}
-                fontWeight={'bold'}
-                width={'80%'}
-              >
-                Notice: This is a demo. Information may not be valid, and load
-                times may vary since the technology used for this project are
-                using free-tier services.
-              </Typography>
-            </Stack>
-            <Stack
               justifyContent="center"
               alignItems="center"
               ref={searchSectionRef}
