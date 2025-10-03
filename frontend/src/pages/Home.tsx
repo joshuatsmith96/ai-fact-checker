@@ -35,6 +35,7 @@ export const Home = () => {
   const onSearch = async () => {
     fadeOut();
     await generateData(search);
+    console.log(data);
   };
 
   const resetSearch = () => {
@@ -127,13 +128,13 @@ export const Home = () => {
       )}
 
       {/* Result Section */}
-      {data && !loading && (
+      {data !== null && !loading && (
         <Stack
           px={{ xs: 2, sm: 4, md: 5 }}
           spacing={2}
           sx={{ width: '100%', overflowX: 'hidden' }}
         >
-          {error && (
+          {data?.error && (
             <Typography color="error" fontSize="16px" mt={2}>
               {error}
             </Typography>

@@ -6,9 +6,23 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import InsertLinkIcon from '@mui/icons-material/InsertLink';
+import { isGeminiError } from '../../../utilities/typeGuard';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const ResultSection = ({ data }: { data: any }) => {
+  if (isGeminiError(data)) {
+    return (
+      <Section>
+        <Stack alignItems="center" gap={2} sx={{ paddingTop: 5 }}>
+          <ErrorOutlineIcon fontSize="large" color="error" />
+          <Typography variant="h6" color="error" textAlign="center">
+            {data.error}
+          </Typography>
+        </Stack>
+      </Section>
+    );
+  }
+
   const aiData = data[0];
 
   return (
